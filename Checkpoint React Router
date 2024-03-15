@@ -1,0 +1,122 @@
+import React, { useState } from 'react';
+import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
+
+// Composant MovieCard
+const MovieCard = ({ movie }) => {
+  return (
+    <div className="movie-card">
+      <Link to={`/movies/${movie.title}`}>
+        <img src={movie.posterURL} alt={movie.title} />
+        <h3>{movie.title}</h3>
+      </Link>
+    </div>
+  );
+};
+
+// Composant MovieList
+const MovieList = ({ movies }) => {
+  return (
+    <div className="movie-list">
+      {movies.map((movie, index) => (
+        <MovieCard key={index} movie={movie} />
+      ))}
+    </div>
+  );
+};
+
+// Composant Filtre
+const Filtre = ({ filterTitle, filterRate, onFilterTitleChange, onFilterRateChange }) => {
+  return (
+    <div className="filter">
+      <input type="text" placeholder="Filtrer par titre" value={filterTitle} onChange={onFilterTitleChange} />
+      <input type="number" placeholder="Filtrer par note" value={filterRate} onChange={onFilterRateChange} />
+    </div>
+  );
+};
+
+// Composant DescriptionMovie
+const DescriptionMovie = ({ movie }) => {
+  return (
+    <div className="description">
+      <h2>{movie.title}</h2>
+      <p>{movie.description}</p>
+      <Link to="/">Retour à la liste des films</Link>
+    </div>
+  );
+};
+
+// Composant TrailerMovie
+const TrailerMovie = ({ movie }) => {
+  return (
+    <div className="trailer">
+      <h2>{movie.title} - Bande-annonce</h2>
+      <iframe width="560" height="315" src={movie.trailerURL} title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      <Link to={`/movies/${movie.title}`}>Retour à la description du film</Link>
+    </div>
+  );
+};
+
+// App principale
+const App = () => {
+  const [movies, setMovies] = useState([
+    { title: "Film 1", description: "Description du Film 1", posterURL: "url1", note: 4, trailerURL: "trailer1" },
+    { title: "Film 2", description: "Description du Film 2", posterURL: "url2", note: 3, trailerURL: "trailer2" },
+    { title: "Film 3", description: "Description du Film 3", posterURL: "url3", note: 5, trailerURL: "trailer3" }
+  ]);
+
+  const [filterTitle, setFilterTitle] = useState('');
+  const [filterRate, setFilterRate] = useState('');
+
+  const handleFilterTitleChange = (event) => {
+    setFilterTitle(event.target.value);
+  };
+
+  const handleFilterRateChange = (event) => {
+    setFilterRate(event.target.value);
+  };
+
+  const filteredMovies = movies.filter(movie => {
+    return (
+      movie.title.toLowerCase().includes(filterTitle.toLowerCase()) &&
+      (!filterRate || movie.note >= filterRate)
+    );
+  });
+
+  const addNewMovie = () => {
+    const newMovie = {
+      title: "Nouveau Film",
+      description: "Description du Nouveau Film",
+      posterURL: "url4",
+      note: 4,
+      trailerURL: "trailer4"
+    };
+    setMovies([...movies, newMovie]);
+  };
+
+  return (
+    <Router>
+      <div className="app">
+        <h1>Liste de films</h1>
+        <Filtre
+          filterTitle={filterTitle}
+          filterRate={filterRate}
+          onFilterTitleChange={handleFilterTitleChange}
+          onFilterRateChange={handleFilterRateChange}
+        />
+        <Route exact path="/" render={() => <MovieList movies={filteredMovies} />} />
+        <Route path="/movies/:title" render={({ match }) => {
+          const movie = movies.find(movie => movie.title === match.params.title);
+          return (
+            <React.Fragment>
+              <DescriptionMovie movie={movie} />
+              <Route path={`/movies/${movie.title}/trailer`} render={() => <TrailerMovie movie={movie} />} />
+            </React.Fragment>
+          );
+        }} />
+        <button onClick={addNewMovie}>Ajouter un nouveau film</button>
+      </div>
+    </Router>
+  );
+};
+
+export default App;
