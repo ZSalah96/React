@@ -1,0 +1,79 @@
+const product = {
+  name: "Product Name",
+  price: 10.99,
+  description: "This is a description of the product.",
+  imageURL: "https://via.placeholder.com/150"
+};
+
+export default product;
+//////////////////////////
+
+import React from 'react';
+
+const Name = ({ name }) => {
+  return <h2>{name}</h2>;
+};
+
+export default Name;
+///////////////////////
+
+
+import React from 'react';
+
+const Price = ({ price }) => {
+  return <p>Price: ${price}</p>;
+};
+
+export default Price;
+//////////////////
+
+
+import React from 'react';
+
+const Description = ({ description }) => {
+  return <p>{description}</p>;
+};
+
+export default Description;
+/////////////////////////
+
+import React from 'react';
+
+const Image = ({ imageURL }) => {
+  return <img src={imageURL} alt="Product" />;
+};
+
+export default Image;
+///////////////////////:
+
+
+import React from 'react';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { Card } from 'react-bootstrap';
+import product from './product';
+import Name from './components/Name';
+import Price from './components/Price';
+import Description from './components/Description';
+import Image from './components/Image';
+
+const firstName = "YourFirstName";
+
+function App() {
+  return (
+    <div className="App">
+      <h1>Product Details</h1>
+      <Card style={{ width: '18rem' }}>
+        <Card.Body>
+          <Name name={product.name} />
+          <Price price={product.price} />
+          <Description description={product.description} />
+          <Image imageURL={product.imageURL} />
+        </Card.Body>
+      </Card>
+      <p>Hello, {firstName ? firstName : "there"}!</p>
+      {firstName && <img src="your_image_url_here" alt="Your Profile" />}
+    </div>
+  );
+}
+
+export default App;
