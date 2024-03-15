@@ -1,0 +1,53 @@
+import React, { Component } from 'react';
+
+class App extends Component {
+  state = {
+    personne: {
+      fullName: "John Doe",
+      bio: "Je suis une personne très intéressante.",
+      imgSrc: "https://via.placeholder.com/150",
+      profession: "Développeur"
+    },
+    show: false,
+    elapsedTime: 0
+  };
+
+  componentDidMount() {
+    this.timer = setInterval(() => {
+      this.setState(prevState => ({
+        elapsedTime: prevState.elapsedTime + 1
+      }));
+    }, 1000);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.timer);
+  }
+
+  toggleShow = () => {
+    this.setState(prevState => ({
+      show: !prevState.show
+    }));
+  };
+
+  render() {
+    const { personne, show, elapsedTime } = this.state;
+
+    return (
+      <div className="App">
+        <button onClick={this.toggleShow}>Afficher/Cacher le profil</button>
+        {show && (
+          <div>
+            <h2>{personne.fullName}</h2>
+            <img src={personne.imgSrc} alt={personne.fullName} />
+            <p>{personne.bio}</p>
+            <p>Profession: {personne.profession}</p>
+          </div>
+        )}
+        <p>Temps écoulé depuis le montage : {elapsedTime} secondes</p>
+      </div>
+    );
+  }
+}
+
+export default App;
